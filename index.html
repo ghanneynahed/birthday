@@ -3,62 +3,91 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Joyeux anniversaire</title>
+  <title>Surprise</title>
+
   <style>
-  :root{
-    --bg1:#ffffff;
-    --bg2:#f6f6f6;
-    --card: rgba(255,255,255,.95);
-    --stroke: rgba(180,0,0,.25);
-    --text: rgba(120,0,0,.95);
-    --muted: rgba(140,0,0,.65);
-    --glow: rgba(200,0,0,.45);
-  }
+    :root{
+      --bg1:#fff7f7;
+      --bg2:#ffecec;
+      --card: rgba(255,255,255,.92);
+      --stroke: rgba(180,0,0,.28);
+      --text: rgba(120,0,0,.95);
+      --muted: rgba(140,0,0,.65);
+      --glow: rgba(200,0,0,.35);
+      --star: rgba(200,0,0,.28);
+      --star-strong: rgba(200,0,0,.55);
+    }
+
     *{box-sizing:border-box}
+
     body{
       margin:0;
       min-height:100svh;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
       color:var(--text);
-      background:
-        radial-gradient(1200px 800px at 15% 20%, rgba(255,255,255,.10), transparent 55%),
-        radial-gradient(900px 700px at 85% 30%, rgba(255,255,255,.08), transparent 60%),
-        radial-gradient(800px 600px at 55% 90%, rgba(255,255,255,.06), transparent 60%),
-        linear-gradient(160deg, var(--bg1), var(--bg2));
+      background: linear-gradient(160deg, var(--bg1), var(--bg2));
       display:grid;
       place-items:center;
       padding:24px;
       overflow:hidden;
     }
-    .stars{
-      position:fixed; inset:0; pointer-events:none;
+
+    /* ===== ÉTOILES ROUGES PARTOUT (fond) ===== */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:-20%;
+      pointer-events:none;
+      opacity:1;
       background-image:
-        radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,.6) 50%, transparent 55%),
-        radial-gradient(1px 1px at 90px 120px, rgba(255,255,255,.55) 50%, transparent 55%),
-        radial-gradient(1.5px 1.5px at 160px 80px, rgba(255,255,255,.45) 50%, transparent 55%);
-      background-size: 220px 180px;
-      opacity:.55;
-      filter: drop-shadow(0 0 6px rgba(255,255,255,.10));
-      animation: drift 18s linear infinite;
-    }
-    @keyframes drift{
-      from{ transform:translateY(0)}
-      to{ transform:translateY(60px)}
+        /* petit pattern d’étoiles en SVG (répété) */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cg fill='none'%3E%3Ctext x='8' y='34' font-size='18'%3E%E2%AD%90%3C/text%3E%3Ctext x='70' y='68' font-size='14'%3E%E2%AD%90%3C/text%3E%3Ctext x='30' y='110' font-size='16'%3E%E2%AD%90%3C/text%3E%3Ctext x='104' y='28' font-size='12'%3E%E2%AD%90%3C/text%3E%3C/g%3E%3C/svg%3E");
+      background-size: 140px 140px;
+      filter: saturate(1.2);
+      mix-blend-mode: multiply;
+      transform: rotate(-8deg);
     }
 
-    .wrap{
-      width:min(720px, 100%);
+    /* petites étincelles/points rouges */
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(2px 2px at 10% 20%, var(--star) 55%, transparent 60%),
+        radial-gradient(2px 2px at 30% 70%, var(--star) 55%, transparent 60%),
+        radial-gradient(2px 2px at 55% 35%, var(--star) 55%, transparent 60%),
+        radial-gradient(2px 2px at 78% 62%, var(--star) 55%, transparent 60%),
+        radial-gradient(2px 2px at 88% 18%, var(--star) 55%, transparent 60%);
+      opacity:.55;
     }
+
+    .wrap{ width:min(760px,100%); }
+
     .card{
+      position:relative;
       background:var(--card);
       border:1px solid var(--stroke);
       border-radius:24px;
       padding:28px 22px;
-      box-shadow: 0 10px 40px rgba(0,0,0,.35);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      position:relative;
+      box-shadow:0 12px 34px rgba(120,0,0,.12);
+      overflow:hidden;
     }
+
+    /* étoiles rouges DANS la carte aussi */
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      opacity:.35;
+      background:
+        radial-gradient(120px 120px at 15% 25%, rgba(200,0,0,.10), transparent 60%),
+        radial-gradient(180px 180px at 85% 20%, rgba(200,0,0,.10), transparent 60%),
+        radial-gradient(220px 220px at 45% 90%, rgba(200,0,0,.08), transparent 60%);
+    }
+
     .badge{
       display:inline-flex;
       align-items:center;
@@ -66,103 +95,166 @@
       padding:10px 14px;
       border-radius:999px;
       border:1px solid var(--stroke);
-      background: rgba(255,255,255,.04);
+      background:rgba(255,255,255,.72);
       color:var(--muted);
       font-size:14px;
-      letter-spacing:.2px;
+      position:relative;
+      z-index:1;
     }
+
     .dot{
       width:8px;height:8px;border-radius:999px;
-      background: rgba(255,255,255,.75);
-      box-shadow: 0 0 20px var(--glow);
+      background:var(--star-strong);
+      box-shadow:0 0 14px var(--glow);
     }
+
     h1{
-      font-size: clamp(28px, 4.3vw, 44px);
       margin:18px 0 10px;
+      font-size:clamp(28px,4vw,44px);
       line-height:1.1;
+      color:var(--text);
+      position:relative;
+      z-index:1;
     }
+
     p{
       margin:0;
-      color:var(--muted);
-      font-size: clamp(15px, 2.2vw, 18px);
+      font-size:clamp(15px,2.2vw,18px);
       line-height:1.6;
+      color:var(--muted);
+      position:relative;
+      z-index:1;
     }
+
+    /* TITRE CACHÉ AU DÉBUT */
+    .hidden{
+      opacity:0;
+      transform:translateY(-10px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .hidden.show{
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    /* Zone du bouton : on la rend "relative" pour déplacer le bouton dedans */
     .actions{
       margin-top:18px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:12px;
-      align-items:center;
+      position:relative;
+      height:62px; /* espace pour que le bouton puisse bouger */
+      border-radius:16px;
+      border:1px dashed rgba(180,0,0,.18);
+      background:rgba(255,255,255,.55);
+      overflow:hidden;
+      display:block;
+      z-index:1;
     }
-    button{
-      border:0;
+
+    .hint{
+      position:absolute;
+      left:14px;
+      top:50%;
+      transform:translateY(-50%);
+      font-size:13px;
+      color:rgba(120,0,0,.55);
+      user-select:none;
+      pointer-events:none;
+    }
+
+    /* Le bouton “fuyant” */
+    button#btn{
+      position:absolute;
+      left: 56%;
+      top: 50%;
+      transform: translate(-50%, -50%);
       cursor:pointer;
-      padding:12px 16px;
+      border:none;
+      padding:12px 18px;
       border-radius:14px;
       font-size:16px;
-      font-weight:650;
-      color:#0b0f1a;
-      background: rgba(255,255,255,.92);
-      box-shadow: 0 10px 30px rgba(0,0,0,.35);
-      transition: transform .12s ease, filter .12s ease;
+      font-weight:700;
+      background:var(--text);
+      color:white;
+      box-shadow:0 10px 22px rgba(120,0,0,.28);
+      transition: transform .12s ease, filter .12s ease, left .18s ease, top .18s ease;
+      touch-action: manipulation;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
     }
-    button:active{ transform: translateY(1px) scale(.99); }
-    button:hover{ filter: brightness(1.02); }
-    .hint{
-      font-size:13px;
-      color: rgba(255,255,255,.55);
+
+    button#btn:hover{ filter:brightness(1.05); }
+    button#btn:active{ transform: translate(-50%, -50%) scale(.99); }
+
+    button#btn.caught{
+      left: 50% !important;
+      top: 50% !important;
+      transition: left .25s ease, top .25s ease, filter .12s ease, transform .12s ease;
+    }
+
+    button#btn:disabled{
+      opacity:.78;
+      cursor:default;
     }
 
     .reveal{
       margin-top:18px;
       padding:18px 16px;
       border-radius:18px;
-      border:1px dashed rgba(255,255,255,.22);
-      background: rgba(255,255,255,.03);
-      overflow:hidden;
+      border:1px dashed var(--stroke);
+      background:rgba(255,255,255,.78);
       max-height:0;
+      overflow:hidden;
       opacity:0;
-      transform: translateY(6px);
-      transition: max-height .55s ease, opacity .45s ease, transform .45s ease;
+      transform:translateY(8px);
+      transition:.55s ease;
+      position:relative;
+      z-index:1;
     }
+
     .reveal.show{
       max-height:520px;
       opacity:1;
-      transform: translateY(0);
-    }
-    .msg{
-      font-size: clamp(16px, 2.2vw, 19px);
-      color: rgba(255,255,255,.88);
-      white-space: pre-line;
-    }
-    .sig{
-      margin-top:10px;
-      color: rgba(255,255,255,.65);
-      font-size: 14px;
+      transform:translateY(0);
     }
 
-    canvas#confetti{
+    .msg{
+      font-size:clamp(16px,2.2vw,19px);
+      white-space:pre-line;
+      color:var(--text);
+    }
+
+    .sig{
+      margin-top:12px;
+      font-size:14px;
+      color:var(--muted);
+    }
+
+    canvas{
       position:fixed;
       inset:0;
       pointer-events:none;
     }
   </style>
 </head>
+
 <body>
-  <div class="stars" aria-hidden="true"></div>
   <canvas id="confetti"></canvas>
 
   <main class="wrap">
     <section class="card">
-      <div class="badge"><span class="dot"></span> Petit message pour toi</div>
+      <div class="badge"><span class="dot"></span> Petit jeu avant la surprise ⭐</div>
+
+      <!-- Titre caché au début -->
+      <h1 id="title" class="hidden">⭐ Joyeux anniversaire Jawhour ! 🤍✨</h1>
+
       <p>
-        J’ai préparé quelque chose de simple.
-        Clique sur le bouton quand tu es prêt.
+        Il y a un bouton… mais il est un peu timide 😄<br/>
+        Attrape-le pour ouvrir le message.
       </p>
 
-      <div class="actions">
-        <button id="btn">Ouvrir le message</button>
-        <span class="hint">Ça prend 2 secondes.</span>
+      <div class="actions" id="arena" aria-label="Zone du bouton">
+        <span class="hint" id="hint">Essaie de cliquer 😅</span>
+        <button id="btn" type="button">Ouvrir 🎁</button>
       </div>
 
       <div id="reveal" class="reveal" aria-live="polite">
@@ -173,79 +265,161 @@
   </main>
 
   <script>
-    // Ton message (modifiable)
-    const MESSAGE = `Joyeux anniversaire Jawhour 🤍✨
-
-Je te souhaite une année douce, pleine de bonnes surprises,
-de santé et de paix !
-
-Profite bien de ta journée.`;
+    /* ===== MESSAGE (comme tu l’as demandé) ===== */
+    const MESSAGE = `Joyeux anniversaire Jawhour !
+Je te souhaite tout le bonheur du monde.
+CTT`;
 
     const btn = document.getElementById("btn");
+    const arena = document.getElementById("arena");
+    const hint = document.getElementById("hint");
+    const title = document.getElementById("title");
     const reveal = document.getElementById("reveal");
     const msg = document.getElementById("msg");
+
+    // ===== Confettis rouges/blancs (léger) =====
     const canvas = document.getElementById("confetti");
     const ctx = canvas.getContext("2d");
-
-    let confetti = [];
-    let animId = null;
-
+    let particles = [];
     function resize(){
-      canvas.width = window.innerWidth * devicePixelRatio;
-      canvas.height = window.innerHeight * devicePixelRatio;
-      ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     }
     window.addEventListener("resize", resize);
     resize();
 
-    function burst(){
-      const W = window.innerWidth, H = window.innerHeight;
-      confetti = Array.from({length: 140}, () => ({
-        x: W * (0.2 + Math.random()*0.6),
-        y: H * (0.15 + Math.random()*0.15),
-        vx: (Math.random()*2 - 1) * 5,
-        vy: (Math.random()*-1 - 0.2) * 8,
-        g: 0.22 + Math.random()*0.10,
-        r: 3 + Math.random()*3,
+    function confetti(){
+      const colors = ["rgba(180,0,0,.85)", "rgba(255,255,255,.95)"];
+      particles = Array.from({length: 140}, () => ({
+        x: window.innerWidth * (0.35 + Math.random()*0.3),
+        y: window.innerHeight * (0.15 + Math.random()*0.15),
+        vx: (Math.random()-0.5)*7,
+        vy: (Math.random()-1.2)*8,
+        g: 0.24 + Math.random()*0.08,
         a: 1,
-        spin: (Math.random()*2 - 1) * 0.2,
-        rot: Math.random()*Math.PI,
+        r: 3 + Math.random()*3,
+        c: colors[Math.random() < 0.65 ? 0 : 1]
       }));
-      if (animId) cancelAnimationFrame(animId);
-      tick();
+      animate();
     }
 
-    function tick(){
-      ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
-      confetti.forEach(p => {
+    function animate(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      particles.forEach(p => {
         p.vy += p.g;
         p.x += p.vx;
         p.y += p.vy;
-        p.rot += p.spin;
-        p.a *= 0.992;
+        p.a *= 0.985;
 
-        ctx.save();
-        ctx.globalAlpha = Math.max(p.a, 0);
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rot);
-        // Pas de couleurs imposées : on utilise du blanc/argenté "safe" et doux
-        ctx.fillStyle = "rgba(255,255,255,.85)";
-        ctx.fillRect(-p.r, -p.r/2, p.r*2, p.r);
-        ctx.restore();
+        ctx.globalAlpha = p.a;
+        ctx.fillStyle = p.c;
+        ctx.fillRect(p.x, p.y, p.r*1.2, p.r);
       });
-      confetti = confetti.filter(p => p.a > 0.06 && p.y < window.innerHeight + 40);
-      if (confetti.length) animId = requestAnimationFrame(tick);
+      particles = particles.filter(p => p.a > 0.05 && p.y < window.innerHeight + 40);
+      if (particles.length) requestAnimationFrame(animate);
     }
 
-    btn.addEventListener("click", () => {
-      // Désactive les clics répétitifs
-      btn.disabled = true;
-      btn.textContent = "Message ouvert ✨";
+    // ===== Bouton qui s’échappe =====
+    let moves = 0;
+    const MAX_MOVES = 7;       // après X esquives, il se laisse attraper
+    const LOCK_AFTER_MS = 9000; // ou après 9 sec, on le rend prenable
 
+    let canDodge = true;
+
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+    function moveButtonAway(pointerX, pointerY){
+      if (!canDodge) return;
+
+      const rect = arena.getBoundingClientRect();
+      const btnRect = btn.getBoundingClientRect();
+
+      // marges pour que le bouton reste dans la zone
+      const pad = 10;
+      const w = btnRect.width;
+      const h = btnRect.height;
+
+      // Choisir une nouvelle position "loin" du pointeur
+      // On part sur une position aléatoire, puis on la pousse à l'opposé du pointeur
+      let x = Math.random() * (rect.width - w - pad*2) + pad;
+      let y = Math.random() * (rect.height - h - pad*2) + pad;
+
+      // pousser à l'opposé du pointeur (effet fuite)
+      const px = pointerX - rect.left;
+      const py = pointerY - rect.top;
+      const dx = (x + w/2) - px;
+      const dy = (y + h/2) - py;
+
+      x = x + Math.sign(dx) * 24;
+      y = y + Math.sign(dy) * 14;
+
+      x = clamp(x, pad, rect.width - w - pad);
+      y = clamp(y, pad, rect.height - h - pad);
+
+      // appliquer (left/top attendent des % ? Non, ici px dans un conteneur relatif)
+      btn.style.left = (x + w/2) + "px";
+      btn.style.top  = (y + h/2) + "px";
+
+      moves++;
+
+      if (moves === 2) hint.textContent = "Encore un effort 😄";
+      if (moves === 4) hint.textContent = "Il commence à se fatiguer…";
+      if (moves >= MAX_MOVES){
+        canDodge = false;
+        hint.textContent = "OK… tu as gagné 😅";
+        btn.classList.add("caught");
+        btn.style.left = "50%";
+        btn.style.top = "50%";
+      }
+    }
+
+    // Déclenchement esquive (desktop: souris, mobile: doigt)
+    btn.addEventListener("mouseenter", (e) => {
+      // placer avec la souris
+      moveButtonAway(e.clientX, e.clientY);
+    });
+
+    btn.addEventListener("mousemove", (e) => {
+      // un peu plus taquin
+      if (canDodge && moves < MAX_MOVES) moveButtonAway(e.clientX, e.clientY);
+    });
+
+    btn.addEventListener("touchstart", (e) => {
+      const t = e.touches && e.touches[0];
+      if (!t) return;
+      // Empêche le "click" immédiat sur mobile quand il esquive
+      if (canDodge) e.preventDefault();
+      moveButtonAway(t.clientX, t.clientY);
+    }, {passive:false});
+
+    // Sécurité: après un petit moment, on arrête de troller
+    setTimeout(() => {
+      if (!canDodge) return;
+      canDodge = false;
+      hint.textContent = "Allez… clique maintenant 🤍";
+      btn.classList.add("caught");
+      btn.style.left = "50%";
+      btn.style.top  = "50%";
+    }, LOCK_AFTER_MS);
+
+    // ===== Au clic : afficher titre + message =====
+    btn.addEventListener("click", () => {
+      // si encore en mode esquive, on ignore le clic
+      if (canDodge) return;
+
+      btn.disabled = true;
+      btn.textContent = "Ouvert ⭐";
+
+      // Afficher le titre
+      title.classList.add("show");
+
+      // Afficher le message
       msg.textContent = MESSAGE;
       reveal.classList.add("show");
-      burst();
-    }, { once:true });
+
+      // Confettis
+      confetti();
+    });
   </script>
 </body>
 </html>
