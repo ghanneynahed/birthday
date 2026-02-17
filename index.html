@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="fr">
 <head>
@@ -16,26 +17,20 @@
       --red:rgba(220,0,0,.95);
       --star:rgba(220,0,0,.55);
     }
-
     *{box-sizing:border-box}
-
     body{
-      margin:0;
-      min-height:100vh;
+      margin:0; min-height:100vh;
       font-family:system-ui,Segoe UI,Roboto,Arial;
       color:var(--text);
       background:linear-gradient(160deg,var(--bg1),var(--bg2));
-      display:grid;
-      place-items:center;
-      padding:24px;
-      overflow:hidden;
+      display:grid; place-items:center;
+      padding:24px; overflow:hidden;
     }
 
-    /* ⭐ étoiles rouges (points lumineux, pas de symboles) */
+    /* ⭐ étoiles rouges (points lumineux) */
     body::before{
       content:"";
-      position:fixed;
-      inset:0;
+      position:fixed; inset:0;
       pointer-events:none;
       background:
         radial-gradient(2px 2px at 10% 15%, var(--star) 60%, transparent 62%),
@@ -67,28 +62,12 @@
       color:var(--muted);
     }
 
-    h1{
-      margin:18px 0 10px;
-      font-size:clamp(28px,4vw,46px);
-    }
+    h1{ margin:18px 0 10px; font-size:clamp(28px,4vw,46px); }
+    p{ margin:0; font-size:clamp(15px,2.2vw,18px); color:var(--muted); line-height:1.6; }
 
-    p{
-      margin:0;
-      font-size:clamp(15px,2.2vw,18px);
-      color:var(--muted);
-      line-height:1.6;
-    }
-
-    /* Titre caché au début */
-    .hidden{
-      opacity:0;
-      transform:translateY(-10px);
-      transition:.6s ease;
-    }
-    .hidden.show{
-      opacity:1;
-      transform:translateY(0);
-    }
+    /* Titre caché */
+    .hidden{ opacity:0; transform:translateY(-10px); transition:.6s ease; }
+    .hidden.show{ opacity:1; transform:translateY(0); }
 
     /* Bouton qui fuit */
     .actions{
@@ -102,41 +81,25 @@
     }
 
     .hint{
-      position:absolute;
-      left:14px;
-      top:50%;
+      position:absolute; left:14px; top:50%;
       transform:translateY(-50%);
-      font-size:13px;
-      color:rgba(255,255,255,.5);
+      font-size:13px; color:rgba(255,255,255,.5);
       pointer-events:none;
     }
 
     #btn{
-      position:absolute;
-      left:55%;
-      top:50%;
+      position:absolute; left:55%; top:50%;
       transform:translate(-50%,-50%);
-      border:none;
-      padding:12px 18px;
+      border:none; padding:12px 18px;
       border-radius:14px;
-      font-size:16px;
-      font-weight:800;
-      background:var(--red);
-      color:white;
+      font-size:16px; font-weight:800;
+      background:var(--red); color:white;
       cursor:pointer;
       box-shadow:0 0 20px rgba(220,0,0,.6);
       transition:.18s ease;
     }
-
-    #btn.caught{
-      left:50%!important;
-      top:50%!important;
-    }
-
-    #btn:disabled{
-      opacity:.8;
-      cursor:default;
-    }
+    #btn.caught{ left:50%!important; top:50%!important; }
+    #btn:disabled{ opacity:.8; cursor:default; }
 
     .reveal{
       margin-top:18px;
@@ -144,28 +107,39 @@
       border-radius:18px;
       border:1px dashed var(--stroke);
       background:rgba(255,255,255,.06);
-      max-height:0;
-      overflow:hidden;
-      opacity:0;
-      transform:translateY(8px);
+      max-height:0; overflow:hidden;
+      opacity:0; transform:translateY(8px);
       transition:.5s ease;
     }
+    .reveal.show{ max-height:700px; opacity:1; transform:translateY(0); }
 
-    .reveal.show{
-      max-height:520px;
-      opacity:1;
-      transform:translateY(0);
+    .msg{ white-space:pre-line; font-size:18px; }
+    .sig{ margin-top:12px; font-size:14px; color:var(--muted); }
+
+    /* Bouton vocal (caché au début) */
+    .voice-wrap{
+      margin-top:14px;
+      display:none;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
     }
+    .voice-wrap.show{ display:flex; }
 
-    .msg{
-      white-space:pre-line;
-      font-size:18px;
-    }
-
-    .sig{
-      margin-top:12px;
+    .voice-btn{
+      border:none;
+      padding:10px 14px;
+      border-radius:14px;
       font-size:14px;
-      color:var(--muted);
+      font-weight:800;
+      background:rgba(255,255,255,.10);
+      color:var(--text);
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,.14);
+    }
+    .voice-status{
+      font-size:13px;
+      color:rgba(255,255,255,.6);
     }
   </style>
 </head>
@@ -189,11 +163,19 @@
     <div id="reveal" class="reveal">
       <div id="msg" class="msg"></div>
       <div class="sig">— De la part de quelqu’un qui te souhaite le meilleur.</div>
+
+      <!-- ✅ Bouton vocal (apparaît après le message) -->
+      <div id="voiceWrap" class="voice-wrap">
+        <button id="voiceBtn" class="voice-btn" type="button">🎙️ Écouter le message vocal</button>
+        <span id="voiceStatus" class="voice-status">(appuie pour lancer)</span>
+      </div>
     </div>
   </section>
 
-  <!-- 🎶 AUDIO -->
-  <audio id="audio" src="music.mp3"></audio>
+  <!-- 🎶 chanson -->
+  <audio id="music" src="music.mp3"></audio>
+  <!-- 🎙️ message vocal -->
+  <audio id="voice" src="voice.mp3"></audio>
 
   <script>
     const MESSAGE = `Joyeux anniversaire Jawhour ⭐
@@ -209,8 +191,15 @@ Kol aam w ahna souhab 🤍`;
     const title = document.getElementById("title");
     const reveal = document.getElementById("reveal");
     const msg = document.getElementById("msg");
-    const audio = document.getElementById("audio");
 
+    const music = document.getElementById("music");
+    const voice = document.getElementById("voice");
+
+    const voiceWrap = document.getElementById("voiceWrap");
+    const voiceBtn = document.getElementById("voiceBtn");
+    const voiceStatus = document.getElementById("voiceStatus");
+
+    // Bouton qui fuit
     let moves = 0;
     let canDodge = true;
     const MAX_MOVES = 6;
@@ -240,16 +229,38 @@ Kol aam w ahna souhab 🤍`;
       }
     },{passive:false});
 
+    // Au clic final
     btn.addEventListener("click", ()=>{
       if(canDodge) return;
+
       btn.disabled=true;
       btn.textContent="Ouvert";
+
       title.classList.add("show");
       msg.textContent=MESSAGE;
       reveal.classList.add("show");
 
-      // 🎶 lancer la musique au clic
-      audio.play().catch(()=>{});
+      // 🎶 démarre la chanson
+      music.play().catch(()=>{});
+
+      // ✅ fait apparaître le bouton vocal
+      voiceWrap.classList.add("show");
+    });
+
+    // 🎙️ bouton vocal
+    voiceBtn.addEventListener("click", ()=>{
+      // coupe la musique si tu veux (optionnel)
+      if(!music.paused) music.pause();
+
+      voice.play().then(()=>{
+        voiceStatus.textContent = "(lecture...)";
+      }).catch(()=>{
+        voiceStatus.textContent = "(clique encore)";
+      });
+    });
+
+    voice.addEventListener("ended", ()=>{
+      voiceStatus.textContent = "(terminé 🤍)";
     });
   </script>
 </body>
