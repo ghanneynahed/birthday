@@ -266,12 +266,12 @@
 
       <div class="final-arena" id="finalArena">
         <span class="final-hint" id="finalHint">Essaye de le choper 😅</span>
-        <button id="finalBtn" type="button">Clôturer ✅</button>
+        <button id="finalBtn" type="button">Appuyer pour finir en beauté</button>
       </div>
 
      
     <div class="final-msg" id="finalMsg">
-        Rien de grand, juste ma façon à moi de dire les choses. 🤍<br>
+        Rien de grand, juste ma façon à moi de dire les choses🤍.<br>
         <span style="opacity:.8;font-size:16px;">Ps : twahachtek …</span>
       </div>
   </section>
@@ -281,10 +281,10 @@
   <audio id="voice" src="voice.mp3"></audio>
 
   <script>
-    const MESSAGE = `Joyeux anniversaire Jawhour ⭐
+    const MESSAGE = `Joyeux anniversaire Jawhour !
 
 Certains boutons sont difficiles à attraper,
-certaines histoires aussi 😛
+certaines personnes aussi 😜
 
 Kol aam w ahna souhab 🤍`;
 
@@ -367,7 +367,7 @@ Kol aam w ahna souhab 🤍`;
 
     /* ===== Quand le vocal se termine : tout disparaît + finale ===== */
     voice.addEventListener("ended", ()=>{
-      voiceStatus.textContent="(terminé 🤍)";
+      voiceStatus.textContent="(terminé )";
 
       // on coupe la musique au cas où
       try{ music.pause(); }catch{}
@@ -419,7 +419,7 @@ Kol aam w ahna souhab 🤍`;
       if(finalCanDodge) return;
 
       finalBtn.disabled = true;
-      finalBtn.textContent = "Terminé 🤍";
+      finalBtn.textContent = "Terminé ";
       finalMsg.classList.add("show");
       finalHint.textContent = "";
     });
