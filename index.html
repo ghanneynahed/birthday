@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="fr">
 <head>
@@ -8,7 +7,7 @@
 
   <style>
     :root{
-      --bg1:#060606; 
+      --bg1:#060606;
       --bg2:#180000;
       --card:rgba(18,18,18,.92);
       --stroke:rgba(220,0,0,.4);
@@ -27,7 +26,7 @@
       padding:24px; overflow:hidden;
     }
 
-    /* ⭐ étoiles rouges (points lumineux) */
+    /* ⭐ étoiles rouges = points lumineux */
     body::before{
       content:"";
       position:fixed; inset:0;
@@ -50,6 +49,12 @@
       box-shadow:0 18px 55px rgba(0,0,0,.7);
       width:min(800px,100%);
       backdrop-filter:blur(6px);
+      transition: opacity .35s ease, transform .35s ease;
+    }
+    .card.gone{
+      opacity:0;
+      transform: translateY(12px) scale(.99);
+      pointer-events:none;
     }
 
     .badge{
@@ -65,11 +70,10 @@
     h1{ margin:18px 0 10px; font-size:clamp(28px,4vw,46px); }
     p{ margin:0; font-size:clamp(15px,2.2vw,18px); color:var(--muted); line-height:1.6; }
 
-    /* Titre caché */
     .hidden{ opacity:0; transform:translateY(-10px); transition:.6s ease; }
     .hidden.show{ opacity:1; transform:translateY(0); }
 
-    /* Bouton qui fuit */
+    /* zone bouton 1 */
     .actions{
       margin-top:18px;
       position:relative;
@@ -79,14 +83,12 @@
       background:rgba(255,255,255,.05);
       overflow:hidden;
     }
-
     .hint{
       position:absolute; left:14px; top:50%;
       transform:translateY(-50%);
       font-size:13px; color:rgba(255,255,255,.5);
       pointer-events:none;
     }
-
     #btn{
       position:absolute; left:55%; top:50%;
       transform:translate(-50%,-50%);
@@ -99,7 +101,7 @@
       transition:.18s ease;
     }
     #btn.caught{ left:50%!important; top:50%!important; }
-    #btn:disabled{ opacity:.8; cursor:default; }
+    #btn:disabled{ opacity:.85; cursor:default; }
 
     .reveal{
       margin-top:18px;
@@ -111,12 +113,12 @@
       opacity:0; transform:translateY(8px);
       transition:.5s ease;
     }
-    .reveal.show{ max-height:700px; opacity:1; transform:translateY(0); }
+    .reveal.show{ max-height:900px; opacity:1; transform:translateY(0); }
 
     .msg{ white-space:pre-line; font-size:18px; }
     .sig{ margin-top:12px; font-size:14px; color:var(--muted); }
 
-    /* Bouton vocal (caché au début) */
+    /* bouton vocal */
     .voice-wrap{
       margin-top:14px;
       display:none;
@@ -141,11 +143,94 @@
       font-size:13px;
       color:rgba(255,255,255,.6);
     }
+
+    /* ===== FINALE ===== */
+    .finale{
+      position:fixed;
+      inset:0;
+      display:none;
+      place-items:center;
+      padding:24px;
+    }
+    .finale.show{ display:grid; }
+
+    .final-card{
+      width:min(800px,100%);
+      background:rgba(18,18,18,.86);
+      border:1px solid rgba(220,0,0,.35);
+      border-radius:26px;
+      padding:22px;
+      box-shadow:0 18px 55px rgba(0,0,0,.7);
+      backdrop-filter: blur(6px);
+    }
+
+    .final-title{
+      margin:0 0 12px;
+      font-size:clamp(22px,3vw,32px);
+    }
+
+    .final-arena{
+      margin-top:14px;
+      position:relative;
+      height:90px;
+      border-radius:16px;
+      border:1px dashed rgba(220,0,0,.35);
+      background:rgba(255,255,255,.05);
+      overflow:hidden;
+    }
+
+    .final-hint{
+      position:absolute;
+      left:14px; top:50%;
+      transform:translateY(-50%);
+      font-size:13px;
+      color:rgba(255,255,255,.55);
+      pointer-events:none;
+    }
+
+    #finalBtn{
+      position:absolute;
+      left:55%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      border:none;
+      padding:12px 18px;
+      border-radius:14px;
+      font-size:15px;
+      font-weight:900;
+      background:rgba(255,255,255,.10);
+      color:var(--text);
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow:0 0 18px rgba(220,0,0,.45);
+      transition:.18s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #finalBtn.caught{
+      left:50%!important;
+      top:50%!important;
+      background:var(--red);
+      border-color:rgba(220,0,0,.55);
+    }
+
+    .final-msg{
+      margin-top:14px;
+      display:none;
+      padding:14px 14px;
+      border-radius:16px;
+      border:1px dashed rgba(220,0,0,.35);
+      background:rgba(255,255,255,.06);
+      font-size:18px;
+      color:var(--text);
+    }
+    .final-msg.show{ display:block; }
   </style>
 </head>
 
 <body>
-  <section class="card">
+  <!-- ÉCRAN PRINCIPAL -->
+  <section class="card" id="mainCard">
     <div class="badge">Petit jeu avant la surprise</div>
 
     <h1 id="title" class="hidden">Joyeux anniversaire Jawhour !</h1>
@@ -157,14 +242,13 @@
 
     <div class="actions" id="arena">
       <span class="hint" id="hint">Essaie de cliquer 😅</span>
-      <button id="btn">Ouvrir</button>
+      <button id="btn" type="button">Ouvrir</button>
     </div>
 
     <div id="reveal" class="reveal">
       <div id="msg" class="msg"></div>
       <div class="sig">— De la part de quelqu’un qui te souhaite le meilleur.</div>
 
-      <!-- ✅ Bouton vocal (apparaît après le message) -->
       <div id="voiceWrap" class="voice-wrap">
         <button id="voiceBtn" class="voice-btn" type="button">🎙️ Écouter le message vocal</button>
         <span id="voiceStatus" class="voice-status">(appuie pour lancer)</span>
@@ -172,9 +256,27 @@
     </div>
   </section>
 
-  <!-- 🎶 chanson -->
+  <!-- FINALE -->
+  <section class="finale" id="finale">
+    <div class="final-card">
+      <h2 class="final-title">Promis c’est le dernier bouton hhh 😄</h2>
+      <p style="margin:0;color:rgba(255,255,255,.70);line-height:1.6;">
+        Dernier mini-challenge… et après je te laisse tranquille 😛
+      </p>
+
+      <div class="final-arena" id="finalArena">
+        <span class="final-hint" id="finalHint">Essaye de le choper 😅</span>
+        <button id="finalBtn" type="button">Clôturer ✅</button>
+      </div>
+
+      <div class="final-msg" id="finalMsg">
+        cette vidéo est faite avec bcp d’amour 🤍
+      </div>
+    </div>
+  </section>
+
+  <!-- Audios -->
   <audio id="music" src="music.mp3"></audio>
-  <!-- 🎙️ message vocal -->
   <audio id="voice" src="voice.mp3"></audio>
 
   <script>
@@ -185,6 +287,7 @@ certaines histoires aussi 😛
 
 Kol aam w ahna souhab 🤍`;
 
+    const mainCard = document.getElementById("mainCard");
     const btn = document.getElementById("btn");
     const arena = document.getElementById("arena");
     const hint = document.getElementById("hint");
@@ -199,7 +302,13 @@ Kol aam w ahna souhab 🤍`;
     const voiceBtn = document.getElementById("voiceBtn");
     const voiceStatus = document.getElementById("voiceStatus");
 
-    // Bouton qui fuit
+    const finale = document.getElementById("finale");
+    const finalArena = document.getElementById("finalArena");
+    const finalBtn = document.getElementById("finalBtn");
+    const finalHint = document.getElementById("finalHint");
+    const finalMsg = document.getElementById("finalMsg");
+
+    /* ===== Bouton 1 qui fuit ===== */
     let moves = 0;
     let canDodge = true;
     const MAX_MOVES = 6;
@@ -229,7 +338,6 @@ Kol aam w ahna souhab 🤍`;
       }
     },{passive:false});
 
-    // Au clic final
     btn.addEventListener("click", ()=>{
       if(canDodge) return;
 
@@ -240,27 +348,79 @@ Kol aam w ahna souhab 🤍`;
       msg.textContent=MESSAGE;
       reveal.classList.add("show");
 
-      // 🎶 démarre la chanson
       music.play().catch(()=>{});
 
-      // ✅ fait apparaître le bouton vocal
       voiceWrap.classList.add("show");
+      voiceStatus.textContent="(appuie pour écouter)";
     });
 
-    // 🎙️ bouton vocal
     voiceBtn.addEventListener("click", ()=>{
-      // coupe la musique si tu veux (optionnel)
       if(!music.paused) music.pause();
 
       voice.play().then(()=>{
-        voiceStatus.textContent = "(lecture...)";
+        voiceStatus.textContent="(lecture...)";
       }).catch(()=>{
-        voiceStatus.textContent = "(clique encore)";
+        voiceStatus.textContent="(clique encore)";
       });
     });
 
+    /* ===== Quand le vocal se termine : tout disparaît + finale ===== */
     voice.addEventListener("ended", ()=>{
-      voiceStatus.textContent = "(terminé 🤍)";
+      voiceStatus.textContent="(terminé 🤍)";
+
+      // on coupe la musique au cas où
+      try{ music.pause(); }catch{}
+
+      // petite transition
+      mainCard.classList.add("gone");
+
+      // affiche la finale après un mini délai
+      setTimeout(()=>{
+        finale.classList.add("show");
+      }, 350);
+    });
+
+    /* ===== Dernier bouton qui fuit ===== */
+    let finalMoves = 0;
+    let finalCanDodge = true;
+    const FINAL_MAX_MOVES = 7;
+
+    function moveFinalBtn(pointerX, pointerY){
+      if(!finalCanDodge) return;
+
+      const r = finalArena.getBoundingClientRect();
+      const x = Math.random()*(r.width-140)+70;
+      const y = Math.random()*(r.height-46)+23;
+
+      finalBtn.style.left = x+"px";
+      finalBtn.style.top  = y+"px";
+
+      finalMoves++;
+      if(finalMoves===2) finalHint.textContent="Encore 😄";
+      if(finalMoves===4) finalHint.textContent="Wallah presque 😛";
+      if(finalMoves>=FINAL_MAX_MOVES){
+        finalCanDodge = false;
+        finalHint.textContent="Ok ok… clique 😅";
+        finalBtn.classList.add("caught");
+      }
+    }
+
+    finalBtn.addEventListener("mouseenter", (e)=> moveFinalBtn(e.clientX, e.clientY));
+    finalBtn.addEventListener("touchstart", (e)=>{
+      if(finalCanDodge){
+        e.preventDefault();
+        const t = e.touches && e.touches[0];
+        if(t) moveFinalBtn(t.clientX, t.clientY);
+      }
+    }, {passive:false});
+
+    finalBtn.addEventListener("click", ()=>{
+      if(finalCanDodge) return;
+
+      finalBtn.disabled = true;
+      finalBtn.textContent = "Terminé 🤍";
+      finalMsg.classList.add("show");
+      finalHint.textContent = "";
     });
   </script>
 </body>
