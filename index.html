@@ -26,6 +26,7 @@
       padding:24px; overflow:hidden;
     }
 
+    /* ⭐ étoiles rouges = points lumineux */
     body::before{
       content:"";
       position:fixed; inset:0;
@@ -72,6 +73,7 @@
     .hidden{ opacity:0; transform:translateY(-10px); transition:.6s ease; }
     .hidden.show{ opacity:1; transform:translateY(0); }
 
+    /* zone bouton 1 */
     .actions{
       margin-top:18px;
       position:relative;
@@ -116,6 +118,7 @@
     .msg{ white-space:pre-line; font-size:18px; }
     .sig{ margin-top:12px; font-size:14px; color:var(--muted); }
 
+    /* bouton vocal */
     .voice-wrap{
       margin-top:14px;
       display:none;
@@ -141,6 +144,7 @@
       color:rgba(255,255,255,.6);
     }
 
+    /* ===== FINALE ===== */
     .finale{
       position:fixed;
       inset:0;
@@ -158,6 +162,11 @@
       padding:22px;
       box-shadow:0 18px 55px rgba(0,0,0,.7);
       backdrop-filter: blur(6px);
+    }
+
+    .final-title{
+      margin:0 0 12px;
+      font-size:clamp(22px,3vw,32px);
     }
 
     .final-arena{
@@ -195,36 +204,45 @@
       border:1px solid rgba(255,255,255,.16);
       box-shadow:0 0 18px rgba(220,0,0,.45);
       transition:.18s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
     }
     #finalBtn.caught{
       left:50%!important;
       top:50%!important;
       background:var(--red);
+      border-color:rgba(220,0,0,.55);
     }
 
     .final-msg{
       margin-top:14px;
       display:none;
-      padding:14px;
+      padding:14px 14px;
       border-radius:16px;
       border:1px dashed rgba(220,0,0,.35);
       background:rgba(255,255,255,.06);
       font-size:18px;
+      color:var(--text);
     }
     .final-msg.show{ display:block; }
   </style>
 </head>
 
 <body>
+  <!-- ÉCRAN PRINCIPAL -->
   <section class="card" id="mainCard">
     <div class="badge">Petit jeu avant la surprise</div>
+
     <h1 id="title" class="hidden">Joyeux anniversaire Jawhour !</h1>
 
-    <p>Il y a un bouton… mais il est un peu têtu 😄</p>
+    <p>
+      Il y a un bouton… mais il est un peu têtu 😄<br>
+      Attrape-le pour voir le message.
+    </p>
 
     <div class="actions" id="arena">
       <span class="hint" id="hint">Essaie de cliquer 😅</span>
-      <button id="btn">Ouvrir</button>
+      <button id="btn" type="button">Ouvrir</button>
     </div>
 
     <div id="reveal" class="reveal">
@@ -232,23 +250,27 @@
       <div class="sig">De la part de quelqu’un qui te souhaite le meilleur.</div>
 
       <div id="voiceWrap" class="voice-wrap">
-        <button id="voiceBtn" class="voice-btn">🎙️ Écouter le message vocal</button>
-        <span id="voiceStatus" class="voice-status"></span>
+        <button id="voiceBtn" class="voice-btn" type="button">🎙️ Écouter le message vocal</button>
+        <span id="voiceStatus" class="voice-status">(appuie pour lancer)</span>
       </div>
     </div>
   </section>
 
+  <!-- FINALE -->
   <section class="finale" id="finale">
     <div class="final-card">
-      <h2>Promis c’est le dernier bouton hhh</h2>
+      <h2 class="final-title">Promis c’est le dernier bouton hhh</h2>
+      <p style="margin:0;color:rgba(255,255,255,.70);line-height:1.6;">
+        Et après je te laisse tranquille 😛
+      </p>
 
       <div class="final-arena" id="finalArena">
         <span class="final-hint" id="finalHint">Essaye de le choper 😅</span>
-        <button id="finalBtn">Appuyer pour finir en beauté</button>
+        <button id="finalBtn" type="button">Appuyer pour finir en beauté</button>
       </div>
 
       <div class="final-msg" id="finalMsg">
-        Bravo Jawhour t'as terminé le jeu haha 😄<br><br>
+        Bravo jawhour t'as terminé le jeu haha ! 😄<br><br>
         Pas grand-chose à dire mais dites avec un grand cœur 🤍.<br><br>
         <span style="opacity:.8;font-size:15px;">
           W o93od 3a9el besh menzideksh des boutons okhrin mara jeya hhhhh.
@@ -257,6 +279,7 @@
     </div>
   </section>
 
+  <!-- Audios -->
   <audio id="music" src="music.mp3"></audio>
   <audio id="voice" src="voice.mp3"></audio>
 
@@ -268,64 +291,143 @@ certaines personnes aussi 😜
 
 Kol aam w ahna souhab 🤍`;
 
+    const mainCard = document.getElementById("mainCard");
     const btn = document.getElementById("btn");
     const arena = document.getElementById("arena");
     const hint = document.getElementById("hint");
+    const title = document.getElementById("title");
     const reveal = document.getElementById("reveal");
     const msg = document.getElementById("msg");
+
     const music = document.getElementById("music");
     const voice = document.getElementById("voice");
+
     const voiceWrap = document.getElementById("voiceWrap");
     const voiceBtn = document.getElementById("voiceBtn");
+    const voiceStatus = document.getElementById("voiceStatus");
+
     const finale = document.getElementById("finale");
     const finalArena = document.getElementById("finalArena");
     const finalBtn = document.getElementById("finalBtn");
     const finalHint = document.getElementById("finalHint");
     const finalMsg = document.getElementById("finalMsg");
 
-    let moves = 0, canDodge = true;
+    /* ===== Bouton 1 qui fuit ===== */
+    let moves = 0;
+    let canDodge = true;
+    const MAX_MOVES = 6;
 
     function moveBtn(){
       if(!canDodge) return;
       const r = arena.getBoundingClientRect();
-      btn.style.left = Math.random()*(r.width-120)+60+"px";
-      btn.style.top  = Math.random()*(r.height-40)+20+"px";
-      if(++moves>=6){ canDodge=false; btn.classList.add("caught"); }
+      const x = Math.random()*(r.width-120)+60;
+      const y = Math.random()*(r.height-40)+20;
+      btn.style.left = x+"px";
+      btn.style.top  = y+"px";
+      moves++;
+      if(moves===2) hint.textContent="Encore 😄";
+      if(moves===4) hint.textContent="Presque 😛";
+      if(moves>=MAX_MOVES){
+        canDodge=false;
+        hint.textContent="Ok… maintenant clique 😅";
+        btn.classList.add("caught");
+      }
     }
 
-    btn.onmouseenter = moveBtn;
-    btn.onclick = ()=>{
+    btn.addEventListener("mouseenter", moveBtn);
+    btn.addEventListener("touchstart", e=>{
+      if(canDodge){
+        e.preventDefault();
+        moveBtn();
+      }
+    },{passive:false});
+
+    btn.addEventListener("click", ()=>{
       if(canDodge) return;
-      msg.textContent = MESSAGE;
+
+      btn.disabled=true;
+      btn.textContent="Ouvert";
+
+      title.classList.add("show");
+      msg.textContent=MESSAGE;
       reveal.classList.add("show");
+
       music.play().catch(()=>{});
+
       voiceWrap.classList.add("show");
-    };
+      voiceStatus.textContent="(appuie pour écouter)";
+    });
 
-    voiceBtn.onclick = ()=>{
-      music.pause();
-      voice.play();
-    };
+    voiceBtn.addEventListener("click", ()=>{
+      if(!music.paused) music.pause();
 
-    voice.onended = ()=>{
-      document.getElementById("mainCard").classList.add("gone");
-      setTimeout(()=>finale.classList.add("show"),300);
-    };
+      voice.play().then(()=>{
+        voiceStatus.textContent="(lecture...)";
+      }).catch(()=>{
+        voiceStatus.textContent="(clique encore)";
+      });
+    });
 
-    let finalMoves=0, finalCan=true;
-    finalBtn.onmouseenter = ()=>{
-      if(!finalCan) return;
+    /* ===== Quand le vocal se termine : tout disparaît + finale ===== */
+    voice.addEventListener("ended", ()=>{
+      voiceStatus.textContent="(terminé)";
+
+      try{ music.pause(); }catch{}
+
+      mainCard.classList.add("gone");
+
+      setTimeout(()=>{
+        finale.classList.add("show");
+      }, 350);
+    });
+
+    /* ===== Dernier bouton qui fuit ===== */
+    let finalMoves = 0;
+    let finalCanDodge = true;
+    const FINAL_MAX_MOVES = 7;
+
+    function moveFinalBtn(pointerX, pointerY){
+      if(!finalCanDodge) return;
+
       const r = finalArena.getBoundingClientRect();
-      finalBtn.style.left = Math.random()*(r.width-140)+70+"px";
-      finalBtn.style.top  = Math.random()*(r.height-46)+23+"px";
-      if(++finalMoves>=7){ finalCan=false; finalBtn.classList.add("caught"); }
-    };
+      const x = Math.random()*(r.width-140)+70;
+      const y = Math.random()*(r.height-46)+23;
 
-    finalBtn.onclick = ()=>{
-      if(finalCan) return;
+      finalBtn.style.left = x+"px";
+      finalBtn.style.top  = y+"px";
+
+      finalMoves++;
+      if(finalMoves===2) finalHint.textContent="Encore 😄";
+      if(finalMoves===4) finalHint.textContent="Wallah presque 😛";
+      if(finalMoves>=FINAL_MAX_MOVES){
+        finalCanDodge = false;
+        finalHint.textContent="Ok… clique 😅";
+        finalBtn.classList.add("caught");
+      }
+    }
+
+    finalBtn.addEventListener("mouseenter", (e)=> moveFinalBtn(e.clientX, e.clientY));
+    finalBtn.addEventListener("touchstart", (e)=>{
+      if(finalCanDodge){
+        e.preventDefault();
+        const t = e.touches && e.touches[0];
+        if(t) moveFinalBtn(t.clientX, t.clientY);
+      }
+    }, {passive:false});
+
+    finalBtn.addEventListener("click", ()=>{
+      if(finalCanDodge) return;
+
+      finalBtn.disabled = true;
+      finalBtn.textContent = "Terminé";
       finalMsg.classList.add("show");
-      finalHint.textContent="";
-    };
+      finalHint.textContent = "";
+
+      // ✅ Retour à la page d'accueil (recharge) après 2,5s
+      setTimeout(()=>{
+        window.location.reload();
+      }, 2500);
+    });
   </script>
 </body>
 </html>
