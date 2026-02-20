@@ -8,6 +8,32 @@
   <style>
     /* (note) pas de redirection à la fin */
 
+        /* ===== SIGNATURE STYLÉE ===== */
+    .signature{
+      margin-top:22px;
+      text-align:right;
+      font-size:15px;
+      color:rgba(255,255,255,.75);
+      font-style:italic;
+      letter-spacing:.3px;
+      opacity:0;
+      transform:translateY(8px);
+      animation: signatureFade .9s ease forwards;
+      animation-delay: .6s;
+    }
+    
+    .signature::before{
+      content:"— ";
+      opacity:.6;
+    }
+    
+    @keyframes signatureFade{
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
+
     :root{
       --bg1:#060606;
       --bg2:#180000;
@@ -245,7 +271,7 @@
 
     <div id="reveal" class="reveal">
       <div id="msg" class="msg"></div>
-      <div class="sig">De la part de quelqu’un qui te souhaite le meilleur.</div>
+      
 
       <div id="voiceWrap" class="voice-wrap">
         <button id="voiceBtn" class="voice-btn" type="button">🎙️ Écouter le message vocal</button>
@@ -267,14 +293,19 @@
         <button id="finalBtn" type="button">Appuyer pour finir en beauté</button>
       </div>
 
-      <div class="final-msg" id="finalMsg">
-        Bravo jawhour t'as gagné haha ! <br><br>
-        Haha je rigole, t'as rien gagné du tout, juste des mots sincères venus du fond du cœur. <br><br>
-        <span style="opacity:.8;font-size:15px;">
-          W o93od 3a9el besh menzideksh des boutons okhrin mara jeya hhhhh 🤍.
-        </span>
-      </div>
+        <div class="final-msg" id="finalMsg">
+    Bravo Jawhour, t'as terminé le jeu haha ! <br><br>
+  
+    Pas grand-chose à dire mais dites avec un grand cœur 🤍. <br><br>
+  
+    <span style="opacity:.8;font-size:15px;">
+      W o93od 3a9el besh menzideksh des boutons okhrin mara jeya hhhhh
+    </span>
+  
+    <div class="signature">
+      De la part de Nahoud.
     </div>
+  </div>
   </section>
 
   <!-- Audios -->
